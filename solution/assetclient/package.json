@@ -1,0 +1,19 @@
+{
+  "private": true,
+  "name": "secondstep",
+  "version": "1.0.0",
+  "description": "",
+  "main": "assetclient.js",
+  "scripts": {
+    "start": " cat assetclient.js - | node -i",
+    "test": "echo \"No got to that bit yet\" && exit 1"
+  },
+  "author": "bartman250",
+  "license": "ISC",
+  "dependencies": {
+    "lexical-scope": "^1.2.0",
+    "request": "^2.69.0",
+    "require": "^2.4.20",
+    "sleep": "^3.0.1"
+    }
+}

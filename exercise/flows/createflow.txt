@@ -1,0 +1,5 @@
+NodeClient -> Hyperledger: Create Asset (http)
+Hyperledger->HyperledgerBlockListener:  Send AssetCreated Event
+HyperledgerBlockListener-> BigChainAssetServer : Create Asset (http)
+BigChainAssetServer-> BigChainDb: Create Asset (BigChain Python api)
+BigChainAssetService-> Hyperledger: Store Asset TxId (http)
