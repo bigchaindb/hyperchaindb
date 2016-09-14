@@ -1,37 +1,16 @@
-import functools
-import os
-import logging
-
-from tornado import websocket, web, ioloop
+from tornado import websocket
 from tornado.gen import coroutine
 
 import rethinkdb as r
-import bigchaindb
 
-logger = logging.getLogger('tornado')
-
-logger.info('Initializing tornado server')
-
-try:
-    CONFIG_FILE = os.environ['BIGCHAINDB_CONFIG']
-except KeyError:
-    CONFIG_FILE = '.bigchaindb_workshop'
-
-
-def get_bigchain(conf=CONFIG_FILE):
-    if os.path.isfile(conf):
-        bigchaindb.config_utils.autoconfigure(filename=conf, force=True)
-    return bigchaindb.Bigchain()
+from .server import get_bigchain
 
 bigchain = get_bigchain()
-
 clients = []
 
 
 # from http://blog.hiphipjorge.com/django-and-realtime-using-django-with-tornado-and-rethinkdb/
 r.set_loop_type('tornado')
-
-
 
 
 @coroutine
@@ -92,23 +71,3 @@ class ChangeFeedWebSocket(websocket.WebSocketHandler):
                 clients.remove(self)
                 print('ws: close (Pool: {} connections)'.format(len(clients)))
                 return
-
-# TODO: use split changefeed for backlog and bigchain
-app = web.Application([
-    (r'/users/(.*)/changes', ChangeFeedWebSocket)
-])
-
-
-def run_tornado_server():
-    tornado_port = int(os.environ.get('TORNADO_PORT', 8888))
-    tornado_address = os.environ.get('TORNADO_HOST', '127.0.0.1')
-    app.listen(tornado_port, address=tornado_address)
-    # TODO: use split changefeed for backlog and bigchain
-    ioloop.IOLoop.current().add_callback(functools.partial(print_changes, 'backlog'))
-    ioloop.IOLoop.current().add_callback(functools.partial(print_changes, 'bigchain'))
-
-    logger.info('Running on http://{}:{}'.format(tornado_address, tornado_port))
-    ioloop.IOLoop.instance().start()
-
-if __name__ == '__main__':
-    run_tornado_server()

@@ -40,5 +40,5 @@ services:
       TORNADO_HOST: 0.0.0.0
     ports:
       - "48888:8888"
-    command: python -m server.tornado_app
+    command: python -m backend.server
 
