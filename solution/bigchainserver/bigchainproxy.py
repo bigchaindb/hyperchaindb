@@ -60,19 +60,31 @@ class myHandler(BaseHTTPRequestHandler):
 
 			data_string = self.rfile.read(int(self.headers['Content-Length']))
 
+			print("\ndata string raw\n",data_string)
+
 			readable = json.loads(data_string.decode('utf-8'))
 
 			print(data_string, readable)
 
-			user = readable['user']
-			asset = readable['asset']
+			asset = readable
+
+			user = asset['Owner']
 
 			self.send_response(200)
 			self.end_headers()
 		
-			tx, result = bigchainwrapper.newAsset(user, asset)
+			tx, result = bigchainwrapper.newAsset(asset['Owner'], asset)
 
-			self.wfile.write(bytes('{"user":"' + user + '","tx":'+  str(tx) + '}',"utf8"))
+			txid = tx['id'];
+
+			asset['BigChainId']=txid
+
+			updatedAssetAsJsonString =  json.dumps(asset)
+
+			#self.wfile.write(bytes('{"user":"' + user + '","tx":'+  str(tx) + '}',"utf8"))
+			self.wfile.write(bytes(updatedAssetAsJsonString,"utf8"))
+			
+			updatedAssetAsJsonString
 			return
 
 		if self.path=="/transfer":
@@ -85,11 +97,13 @@ class myHandler(BaseHTTPRequestHandler):
 
 			fromUser = readable['fromUser']
 			toUser   =	readable['toUser']
-			assetId = readable['assetId']
+			assetId = readable['identifier']
 			self.send_response(200)
 			self.end_headers()
 		
 			tx, result = bigchainwrapper.transferAsset(fromUser, toUser, assetId)
+
+			
 
 			self.wfile.write(bytes('{"fromUser":"' + fromUser + '","tx":'+  str(tx) + '}',"utf8"))
 			return
@@ -97,9 +111,9 @@ class myHandler(BaseHTTPRequestHandler):
 try:
 	#Create a web server and define the handler to manage the
 	#incoming request
-	bigchainwrapper.addUser('a')
-	bigchainwrapper.addUser('b')
-	bigchainwrapper.addUser('c')
+	bigchainwrapper.addUser('aa')
+	bigchainwrapper.addUser('bb')
+	bigchainwrapper.addUser('cc')
 
 	server = HTTPServer(('', PORT_NUMBER), myHandler)
 	print ('Started httpserver on port ' , PORT_NUMBER)

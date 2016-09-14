@@ -24,7 +24,7 @@ function deploy() {
                 },
                 "ctorMsg": {
                     "function": "init",
-                    "args": ["a", "888", "b", "999"]
+                    "args": ["aa", "bb", "cc"]
                 }
             },
             "id": 1
@@ -42,178 +42,24 @@ function deploy() {
     });
 }
 
-function invoke() {
-
-    var request = require('request');
-
-    request({
-        url: blockchainServer + '/chaincode', //URL to hit
-        method: 'POST',
-        json: {
-            "jsonrpc": "2.0",
-            "method": "invoke",
-            "params": {
-                "type": 1,
-                "chaincodeID": {
-                    "name": chaincodeGuid
-                },
-                "ctorMsg": {
-                    "function": "invoke",
-                    "args": ["a", "b", "10"]
-                }
-            },
-            "id": 2
-        }
-    }, function (error, response, body) {
-        if (error) {
-            console.log(error);
-        } else {
-            console.log(response.statusCode, body);
-        
-        }
-
-    });
-
-};
-
-function deposit(account, amount) {
-
-    var request = require('request');
-
-    request({
-        url: blockchainServer + '/chaincode', //URL to hit
-        method: 'POST',
-        json: {
-            "jsonrpc": "2.0",
-            "method": "invoke",
-            "params": {
-                "type": 1,
-                "chaincodeID": {
-                    "name": "gg"
-                },
-                "ctorMsg": {
-                    "function": "deposit",
-                    "args": [account,amount]
-                }
-            },
-            "id": 4
-        }
-    }, function (error, response, body) {
-        if (error) {
-            console.log(error);
-        } else {
-            console.log(response.statusCode, body);
-        
-        }
-
-    });
-
-};
-
-
-function query(account){
-    var chaincodeName = chaincodeGuid;
-    queryinternal(account, chaincodeName);
-}
-
-function queryinternal(account, chaincodeName) {
-
-    var request = require('request');
-    //Lets configure and request
-    request({
-        url: blockchainServer + '/chaincode', //URL to hit
-        //qs: {from: 'blog example', time: +new Date()}, //Query string data
-        method: 'POST',
-        //Lets post the following key/values as form
-        json: {
-            "jsonrpc": "2.0",
-            "method": "query",
-            "params": {
-                "type": 1,
-                "chaincodeID": {
-                    "name": chaincodeName
-                },
-                "ctorMsg": {
-                    "function": "query",
-                    "args": [account]
-                }
-            },
-            "id": 3
-        }
-    }, function (error, response, body) {
-        if (error) {
-            console.log(error);
-        } else {
-            console.log(response.statusCode, body);
-        }
-    });
-};
-
-
-function sell(){
-
-    var chaincodeName = chaincodeGuid;
-
-    var assetBartCoin = {Name: "BartCoin",
-		Identifier: "A1",
-		Type:       "Crypto",
-		Owner:      "aa",
-		Price:      3.14};
-
-    var assetBartCoinStringed = JSON.stringify(assetBartCoin)
-
-    sellinternal(assetBartCoinStringed,chaincodeName )
-
-}
-
-function sellinternal(asset, chaincodeName){
-
-    var request = require('request');
-
-    request({
-        url: blockchainServer + '/chaincode', //URL to hit
-        method: 'POST',
-        json: {
-            "jsonrpc": "2.0",
-            "method": "invoke",
-            "params": {
-                "type": 1,
-                "chaincodeID": {
-                    "name": chaincodeName
-                },
-                "ctorMsg": {
-                    "function": "sell",
-                    "args": [asset]
-                }
-            },
-            "id": 6
-        }
-    }, function (error, response, body) {
-        if (error) {
-            console.log(error);
-        } else {
-            console.log(response.statusCode, body);
-        }
-    });
-}
-
 function createasset(){
 
     var chaincodeName = chaincodeGuid;
 
-    var assetBartCoin = {Name: "BartCoin",
-		Identifier: "A1",
-		Type:       "Crypto",
-		Owner:      "aa",
-		Price:      3.14};
+    var assetBartCoin = {"Name":"BartCoin",
+		"Identifier": "A1",
+		"Type":       "Crypto",
+		"Owner":      "aa",
+		"Price":      3.14,
+        "BigChainId": ""};
 
     var assetBartCoinStringed = JSON.stringify(assetBartCoin)
 
-    sellinternal(assetBartCoinStringed,chaincodeName )
+    createAssetInternal(assetBartCoinStringed,chaincodeName )
 
 }
 
-function createassetInternal(asset, chaincodeName){
+function createAssetInternal(asset, chaincodeName){
 
     var request = require('request');
 
@@ -233,7 +79,7 @@ function createassetInternal(asset, chaincodeName){
                     "args": [asset]
                 }
             },
-            "id": 6
+            "id": 2
         }
     }, function (error, response, body) {
         if (error) {
@@ -244,14 +90,51 @@ function createassetInternal(asset, chaincodeName){
     });
 }
 
-
-function sales(){
+function transfer(fromUser, toUser, assetIdentifier){
 
     var chaincodeName = chaincodeGuid;
-    salesinternal(chaincodeName)
+
+    transferInternal(fromUser, toUser, assetIdentifier,chaincodeName )
 }
 
-function salesinternal(chaincodeName) {
+function transferInternal(fromUser, toUser, assetIdentifier, chaincodeName){
+
+    var request = require('request');
+
+    request({
+        url: blockchainServer + '/chaincode', //URL to hit
+        method: 'POST',
+        json: {
+            "jsonrpc": "2.0",
+            "method": "invoke",
+            "params": {
+                "type": 1,
+                "chaincodeID": {
+                    "name": chaincodeName
+                },
+                "ctorMsg": {
+                    "function": "transfer",
+                    "args": [fromUser,toUser,assetIdentifier]
+                }
+            },
+            "id": 3
+        }
+    }, function (error, response, body) {
+        if (error) {
+            console.log(error);
+        } else {
+            console.log(response.statusCode, body);
+        }
+    });
+}
+
+function listAssets(userName){
+
+    var chaincodeName = chaincodeGuid;
+    listAssetsInternal(userName,chaincodeName)
+}
+
+function listAssetsInternal(userName, chaincodeName) {
 
     var request = require('request');
     //Lets configure and request
@@ -267,11 +150,11 @@ function salesinternal(chaincodeName) {
                     "name": chaincodeName
                 },
                 "ctorMsg": {
-                    "function": "sales",
-                    "args": ["latest"]
+                    "function": "assets",
+                    "args": [userName]
                 }
             },
-            "id": 7
+            "id": 4
         }
     }, function (error, response, body) {
         if (error) {
@@ -281,4 +164,6 @@ function salesinternal(chaincodeName) {
         }
     });
 };
+
+
 
