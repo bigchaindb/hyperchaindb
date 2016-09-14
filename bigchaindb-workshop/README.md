@@ -50,17 +50,20 @@ docker-machine ip as necessary).
 
 ### Locally
 
-If you'd like to run these examples locally (preferably in a virtualenv), you can do so using
-the handy CLI:
+If you'd like to run the backend locally (preferably in a virtualenv), you can do so using:
 
 ```bash
-$ bigchaindb-examples --help
+# Initialize everything
+$ bigchaindb -yc .bigchaindb_workshop configure
+$ bigchaindb -c .bigchaindb_workshop init
 
 # Start everything
-$ bigchaindb-examples start --init --all
+$ bigchaindb -c .bigchaindb_workshop start
+# in an other console run the API server
+$ python -m backend.server
 
-# Reset everything
-$ bigchaindb-examples reset-all
+# Drop everything
+$ bigchaindb -c .bigchaindb_workshop drop
 ```
 
 ## Acknowledgements:
