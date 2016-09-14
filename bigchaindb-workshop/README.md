@@ -38,6 +38,11 @@ docker-machine ip as necessary).
 If you'd like to run the backend locally (preferably in a virtualenv), you can do so using:
 
 ```bash
+# Install everything in a virtualenv
+$ virtualenv venv -p python3
+$ source venv/bin/activate
+$ pip install -e .[dev]
+
 # Initialize everything
 $ bigchaindb -yc .bigchaindb_workshop configure
 $ bigchaindb -c .bigchaindb_workshop init
