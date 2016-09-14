@@ -4,7 +4,7 @@ RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 
 COPY setup.py /usr/src/app/
-COPY server /usr/src/app/server
+COPY backend /usr/src/app/backend
 
 RUN pip install --upgrade pip
 RUN pip install --no-cache-dir -e .[dev]
