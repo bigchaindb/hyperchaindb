@@ -4,9 +4,8 @@ import logging
 
 from tornado import web, ioloop
 
-import bigchaindb
-from api import GetTestHandler
-from websockets import ChangeFeedWebSocket, print_changes
+from .api import GetTestHandler
+from .websockets import ChangeFeedWebSocket, print_changes
 
 
 logger = logging.getLogger('tornado')
