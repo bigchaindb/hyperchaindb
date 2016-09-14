@@ -4,26 +4,13 @@ import logging
 
 from tornado import web, ioloop
 
-import bigchaindb
-from api import GetTestHandler
-from websockets import ChangeFeedWebSocket, print_changes
+from .api import GetTestHandler
+from .websockets import ChangeFeedWebSocket, print_changes
 
 
 logger = logging.getLogger('tornado')
 
 logger.info('Initializing tornado server')
-
-try:
-    CONFIG_FILE = os.environ['BIGCHAINDB_CONFIG']
-except KeyError:
-    CONFIG_FILE = '.bigchaindb_workshop'
-
-
-def get_bigchain(conf=CONFIG_FILE):
-    if os.path.isfile(conf):
-        bigchaindb.config_utils.autoconfigure(filename=conf, force=True)
-    return bigchaindb.Bigchain()
-
 
 app = web.Application([
     (r'/test', GetTestHandler),
