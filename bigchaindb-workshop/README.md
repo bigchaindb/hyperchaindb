@@ -30,7 +30,7 @@ $ make
 $ DOCKER_MACHINE_IP=$(docker-machine ip) make
 ```
 
-The app will be available at <http://localhost:33000> (replace ``localhost`` with your
+The API will be available at <http://localhost:48888> (replace ``localhost`` with your
 docker-machine ip as necessary).
 
 ### Locally
@@ -55,6 +55,9 @@ $ python -m backend.server
 # Drop everything
 $ bigchaindb -c .bigchaindb_workshop drop
 ```
+
+
+The API will be available at <http://localhost:8888>.
 
 ## Acknowledgements:
 
