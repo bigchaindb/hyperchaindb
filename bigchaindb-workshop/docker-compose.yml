@@ -30,7 +30,7 @@ services:
       context: .
       dockerfile: ./compose/Dockerfile
     volumes:
-      - ./server:/usr/src/app/server
+      - ./backend:/usr/src/app/backend
     volumes_from:
       - bdb
     environment:
