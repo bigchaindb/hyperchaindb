@@ -1,0 +1,44 @@
+version: '2'
+
+
+services:
+
+  rdb:
+    image: rethinkdb
+    ports:
+      - "58087:8080"
+      - "28015"
+
+  bdb:
+    build:
+      context: .
+      dockerfile: ./compose/Dockerfile
+    volumes:
+      - ./setup.py:/usr/src/app/setup.py
+      - ./.bigchaindb_workshop_docker:/usr/src/app/.bigchaindb_workshop
+    environment:
+      BIGCHAINDB_CONFIG: .bigchaindb_workshop
+      BIGCHAINDB_DATABASE_HOST: rdb
+      BIGCHAINDB_DATABASE_NAME: bigchaindb_workshop
+      LEDGER_API_BASE_PORT: 48000
+      LEDGER_WS_BASE_PORT: 48888
+      DOCKER_MACHINE_IP: "${DOCKER_MACHINE_IP}"
+    command: bigchaindb -c .bigchaindb_workshop start
+
+  api:
+    build:
+      context: .
+      dockerfile: ./compose/Dockerfile
+    volumes:
+      - ./backend:/usr/src/app/backend
+    volumes_from:
+      - bdb
+    environment:
+      BIGCHAINDB_CONFIG: .bigchaindb_workshop
+      BIGCHAINDB_DATABASE_HOST: rdb
+      BIGCHAINDB_LEDGER_NUMBER: 0
+      TORNADO_HOST: 0.0.0.0
+    ports:
+      - "48888:8888"
+    command: python -m backend.server
+
