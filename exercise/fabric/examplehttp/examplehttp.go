@@ -156,6 +156,33 @@ func postToBigChain() {
 
 }
 
+func postToProxy() {
+
+	url := "http://localhost:8081/create"
+	fmt.Println("URL:>", url)
+
+	var payloadString = "{\"Name\":\"BartCoin\",\"Identifier\":\"A1\",\"Type\":\"Crypto\",\"Owner\":\"aa\",\"Price\":3.14,\"BigChainId\":\"k\"}"
+
+	var jsonStr = []byte(payloadString)
+
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonStr))
+	req.Header.Set("X-Custom-Header", "myvalue")
+	req.Header.Set("Content-Type", "application/json")
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		panic(err)
+	}
+	defer resp.Body.Close()
+
+	fmt.Println("response Status:", resp.Status)
+	fmt.Println("response Headers:", resp.Header)
+	body, _ := ioutil.ReadAll(resp.Body)
+	fmt.Println("response Body:", string(body))
+
+}
+
 func main() {
 
 	var account string
@@ -165,8 +192,9 @@ func main() {
 
 	//queryFabric(account)
 
-	postToBigChain()
+	//postToBigChain()
 
+	postToProxy()
 	//getContent()
 	//retrieveFromBigChainDb()
 
