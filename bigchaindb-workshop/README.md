@@ -1,27 +1,12 @@
 # BigchainDB Workshop
 
-[![Documentation Status](http://readthedocs.org/projects/bigchaindb-examples/badge/?version=latest)](http://bigchaindb-examples.readthedocs.io/en/latest/?badge=latest)
 [![Join the chat at https://gitter.im/bigchaindb/bigchaindb](https://badges.gitter.im/bigchaindb/bigchaindb.svg)](https://gitter.im/bigchaindb/bigchaindb?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-This repo contains examples and tutorials for BigchainDB.
-
-__Warning__: These examples are for demonstration purposes and should not be used as-is for production
-
-See the [documentation](http://bigchaindb-examples.readthedocs.io/en/latest/index.html):
-* [Installing](http://bigchaindb-examples.readthedocs.io/en/latest/install.html)
-* [Running](http://bigchaindb-examples.readthedocs.io/en/latest/run.html)
-* [Troubleshooting](http://bigchaindb-examples.readthedocs.io/en/latest/troubleshooting.html)
-
-Examples:
-* [On the Record](#example-on-the-record)
-* [Share Trader](#example-share-trader)
-* [Interledger](#example-interledger)
+This repo contains workshop examples and tutorials for BigchainDB.
 
 ### Dependencies
 
-The examples can be [run via Docker](http://bigchaindb-examples.readthedocs.io/en/latest/install.html#the-docker-way)
-(**recommended**), but, if you'd like, you can also [run them locally](http://bigchaindb-examples.readthedocs.io/en/latest/install.html#install-from-source)
-with the following system dependencies:
+The examples can be run via Docker
 
  - OS dependencies: see [setup BigchainDB & RethinkDB](https://bigchaindb.readthedocs.io/en/latest/installing-server.html#install-and-run-rethinkdb-server)
  - python>=3.4
