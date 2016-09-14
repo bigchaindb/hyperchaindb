@@ -3,7 +3,7 @@ from tornado.gen import coroutine
 
 import rethinkdb as r
 
-from .server import get_bigchain
+from .utils import get_bigchain
 
 bigchain = get_bigchain()
 clients = []
