@@ -16,6 +16,8 @@ services:
     volumes:
       - ./setup.py:/usr/src/app/setup.py
       - ./.bigchaindb_workshop_docker:/usr/src/app/.bigchaindb_workshop
+    ports:
+      - "49984:9984"
     environment:
       BIGCHAINDB_CONFIG: .bigchaindb_workshop
       BIGCHAINDB_DATABASE_HOST: rdb
