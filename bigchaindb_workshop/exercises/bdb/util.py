@@ -30,6 +30,10 @@ def get_tx_status(tx_id):
     return requests.get('{}/{}/status'.format(BDB_API_TX, tx_id))
 
 
+def get_tx_owned(vk):
+    return b.get_owned_ids(vk)
+
+
 def poll_tx_status_until_valid(tx_id):
     tx_status = None
     # Poll the transaction status

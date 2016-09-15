@@ -3,11 +3,12 @@ from time import sleep
 
 from bigchaindb import crypto
 
-from .util import (
+from bigchaindb_workshop.exercises.bdb.util import (
     b,
     BDB_URL,
     post_tx,
     get_tx,
+    get_tx_owned,
     poll_tx_status_until_valid,
     printd
 )
@@ -24,13 +25,10 @@ sk_test1, vk_test1 = crypto.generate_key_pair()
 digital_asset_payload = {'msg': 'Hello BigchainDB!'}
 
 # A create transaction uses the operation `CREATE` and has no inputs
-tx = b.create_transaction(b.me, vk_test1, None, 'CREATE', payload=digital_asset_payload)
-
-# Sign the transaction
-tx_signed = b.sign_transaction(tx, b.me_private)
+tx = b.create_transaction(vk_test1, None, None, 'CREATE', payload=digital_asset_payload)
 
 # POST the transaction to BigchainDB
-response = post_tx(tx_signed)
+response = post_tx(tx)
 tx_received = response.json()
 print(response.status_code)
 
@@ -41,3 +39,4 @@ poll_tx_status_until_valid(tx_received['id'])
 response = get_tx(tx_received['id'])
 printd(response.json())
 
+print(get_tx_owned(vk_test1))
