@@ -1,6 +1,4 @@
-from bigchaindb import crypto
-
-from bigchaindb_workshop.exercises.bdb.util import (
+from .driver import (
     b,
     get_account,
     get_accounts,
@@ -9,8 +7,8 @@ from bigchaindb_workshop.exercises.bdb.util import (
     post_tx,
     get_tx,
     poll_tx_status_until_valid,
-    printd
 )
+from .util import printd
 
 # Create an account
 dimi = post_account('dimi').json()
