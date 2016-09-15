@@ -7,7 +7,8 @@ from tornado.gen import coroutine
 
 from ..models.accounts import (
     Account,
-    retrieve_accounts
+    retrieve_accounts,
+    store_account_async
 )
 from ..utils import (
     get_bigchain,
@@ -32,9 +33,8 @@ class AccountsHandler(web.RequestHandler):
         except JSONDecodeError:
             pass
 
-        account = Account(bigchain=bigchain,
-                          name=name,
-                          db=APP_DB_NAME)
+        account = Account(name)
+        account = yield store_account_async(account, bigchain, APP_DB_NAME)
         self.write(account)
 #
 #

@@ -59,6 +59,56 @@ $ bigchaindb -c .bigchaindb_workshop drop
 
 The API will be available at <http://localhost:8888>.
 
+
+## API endpoints
+
+### Accounts
+
+#### Retrieve account list
+
+##### Request
+```http
+GET /accounts/ HTTP/1.1
+Host: localhost:<PORT>
+Content-Type: application/json
+```
+
+##### Response
+```http
+HTTP/1.1 200 OK
+[   
+    {
+        "id": "<uuid>"
+        "name": "<string>",
+        "sk": "<base58>"
+        "vk": "<base58>"
+    }, ...
+]
+```
+
+#### Create account
+
+##### Request
+```http
+POST /accounts/ HTTP/1.1
+Host: localhost:<PORT>
+Content-Type: application/json
+Body:
+    {
+        "name": "<string: optional>"
+    }
+```
+
+##### Response
+```http
+HTTP/1.1 200 OK
+{
+    "name": "<string>",
+    "sk": "<base58>"
+    "vk": "<base58>"
+}
+```
+
 ## Acknowledgements:
 
 Special thanks to the BigchainDB/ascribe.io team for their insights and code contributions:

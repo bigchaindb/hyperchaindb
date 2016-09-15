@@ -3,39 +3,13 @@ import rethinkdb as r
 import bigchaindb.crypto
 from tornado.gen import coroutine
 
+from ..utils import feed_to_list
+
 
 class Account:
-    def __init__(self, bigchain, name, db):
-        self.bigchain = bigchain
-        self.db = db
+    def __init__(self, name):
         self.name = name
         self.sk, self.vk = bigchaindb.crypto.generate_key_pair()
-        self.save()
-
-    def save(self):
-        try:
-            r.db_create(self.db).run(self.bigchain.conn)
-        except r.ReqlOpFailedError:
-            pass
-
-        try:
-            r.db(self.db).table_create('accounts').run(self.bigchain.conn)
-        except r.ReqlOpFailedError:
-            pass
-
-        user_exists = list(r.db(self.db)
-                           .table('accounts')
-                           .filter(lambda user: (user['name'] == self.name))
-                           .run(self.bigchain.conn))
-        if not len(user_exists):
-            r.db(self.db)\
-                .table('accounts')\
-                .insert(self.as_dict(), durability='hard')\
-                .run(self.bigchain.conn)
-        else:
-            user_persistent = user_exists[0]
-            self.vk = user_persistent['vk']
-            self.sk = user_persistent['sk']
 
     def as_dict(self):
         return {
@@ -49,8 +23,60 @@ class Account:
 def retrieve_accounts(bigchain, db):
     conn = yield bigchain.conn
     accounts_feed = yield r.db(db).table('accounts').run(conn)
-    accounts = []
-    while (yield accounts_feed.fetch_next()):
-        account = yield accounts_feed.next()
-        accounts.append(account)
+    accounts = yield feed_to_list(accounts_feed)
     return accounts
+
+
+def store_account(account, bigchain, db):
+    conn = bigchain.conn
+    try:
+        r.db_create(db).run(conn)
+    except r.ReqlOpFailedError:
+        pass
+
+    try:
+        r.db(db).table_create('accounts').run(conn)
+    except r.ReqlOpFailedError:
+        pass
+
+    user_exists = \
+        list(r.db(db)
+             .table('accounts')
+             .filter(lambda user: (user['name'] == account.name))
+             .run(conn))
+
+    if not len(user_exists):
+        r.db(db) \
+            .table('accounts') \
+            .insert(account.as_dict(), durability='hard') \
+            .run(conn)
+
+
+@coroutine
+def store_account_async(account, bigchain, db):
+    conn = yield bigchain.conn
+    try:
+        yield r.db_create(db).run(conn)
+    except r.ReqlOpFailedError:
+        pass
+
+    try:
+        yield r.db(db).table_create('accounts').run(conn)
+    except r.ReqlOpFailedError:
+        pass
+
+    user_exists_feed = \
+        yield r.db(db) \
+            .table('accounts') \
+            .filter(lambda user: (user['name'] == account.name)) \
+            .run(conn)
+    user_exists = yield feed_to_list(user_exists_feed)
+
+    if not len(user_exists):
+        yield r.db(db) \
+            .table('accounts') \
+            .insert(account.as_dict(), durability='hard') \
+            .run(conn)
+        return account.as_dict()
+    else:
+        return user_exists[0]
