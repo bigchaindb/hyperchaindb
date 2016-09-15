@@ -21,7 +21,6 @@ services:
     environment:
       BIGCHAINDB_CONFIG: .bigchaindb_workshop
       BIGCHAINDB_DATABASE_HOST: rdb
-      BIGCHAINDB_DATABASE_NAME: bigchaindb_workshop
       BIGCHAINDB_API_ENDPOINT: http://bdb:9984/api/v1
       BIGCHAINDB_SERVER_BIND: 0.0.0.0:9984
       LEDGER_API_BASE_PORT: 48000

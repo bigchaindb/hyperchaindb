@@ -5,7 +5,7 @@ from tornado.gen import coroutine
 
 API_BASE_HOST = os.environ.get('DOCKER_MACHINE_IP') or 'localhost'
 API_BASE_PORT = int(os.environ.get('API_BASE_PORT', '8888'))
-APP_DB_NAME = 'bigchaindb_workshop'
+APP_DB_NAME = 'bigchain'
 NUM_ACCOUNTS = 3
 
 try:
@@ -17,7 +17,7 @@ except KeyError:
 def get_bigchain(conf=CONFIG_FILE):
     if os.path.isfile(conf):
         bigchaindb.config_utils.autoconfigure(filename=conf, force=True)
-    return bigchaindb.Bigchain(dbname=APP_DB_NAME)
+    return bigchaindb.Bigchain()
 
 
 @coroutine
