@@ -3,7 +3,7 @@ all: build init start
 build:
 	docker-compose build
 
-init: reinit_db config
+init: reinit_db config accounts
 
 start:
 	docker-compose up
@@ -17,7 +17,7 @@ config:
 	docker-compose run --rm bdb bigchaindb -c .bigchaindb_workshop init
 
 accounts:
-	docker-compose run --rm bdb python init_accounts.py
+	docker-compose run --rm bdb python -m backend.init_accounts
 
 drop_db:
 	docker-compose stop rdb
