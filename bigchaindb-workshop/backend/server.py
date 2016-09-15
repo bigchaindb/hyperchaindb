@@ -4,7 +4,7 @@ import logging
 
 from tornado import web, ioloop
 
-from .api import GetTestHandler
+from .api.accounts import AccountsHandler
 from .websockets import ChangeFeedWebSocket, print_changes
 
 
@@ -13,8 +13,8 @@ logger = logging.getLogger('tornado')
 logger.info('Initializing tornado server')
 
 app = web.Application([
-    (r'/test', GetTestHandler),
-    (r'/users/(.*)/changes', ChangeFeedWebSocket)
+    (r'/accounts', AccountsHandler),
+    (r'/accounts/(.*)/changes', ChangeFeedWebSocket)
 ])
 
 
