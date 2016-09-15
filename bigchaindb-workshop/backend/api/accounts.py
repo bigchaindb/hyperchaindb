@@ -36,14 +36,3 @@ class AccountsHandler(web.RequestHandler):
         account = Account(name)
         account = yield store_account_async(account, bigchain, APP_DB_NAME)
         self.write(account)
-#
-#
-# @api_views.route('/accounts/<account_vk>/assets/')
-# def get_assets_for_account(account_vk):
-#     query = request.args.get('search')
-#
-#     result = {
-#         'bigchain': assets.get_owned_assets(bigchain, vk=account_vk, query=query),
-#         'backlog': assets.get_owned_assets(bigchain, vk=account_vk, query=query, table='backlog')
-#     }
-#     return flask.jsonify({'assets': result, 'account': account_vk})
