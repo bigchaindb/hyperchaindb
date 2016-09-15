@@ -1,3 +1,4 @@
+import os
 import json
 import requests
 
@@ -9,10 +10,13 @@ from .util import printd
 b = get_bigchain()
 
 BDB_PORT = 9984
-BDB_URL = 'http://localhost:{}'.format(BDB_PORT)
-BDB_API_URL = '{}/api/v1'.format(BDB_URL)
+BDB_URL = os.environ.get('BIGCHAINDB_BASE_URL',
+                         'http://localhost:{}'.format(BDB_PORT))
+BDB_API_URL = os.environ.get('BIGCHAINDB_API_ENDPOINT',
+                             '{}/api/v1'.format(BDB_URL))
 BDB_API_TX = '{}/transactions'.format(BDB_API_URL)
-BDB_API_ACCOUNTS = 'http://localhost:{}/accounts'.format(8888)
+BDB_API_ACCOUNTS = os.environ.get('BDB_API_ACCOUNTS',
+                                  'http://localhost:{}/accounts'.format(8888))
 
 
 def post_tx(tx):
