@@ -1,5 +1,3 @@
-from bigchaindb.exceptions import DoubleSpend
-
 from .driver import (
     b,
     get_tx_owned,
@@ -41,11 +39,10 @@ print(b.is_valid_transaction(tx_transfer_signed))
 
 # POST the transaction to BigchainDB
 response = post_tx(tx_transfer_signed)
-tx_received = response.json()
 print(response.status_code)
 
 # Poll the transaction status
-poll_tx_status_until_valid(tx_received['id'])
+poll_tx_status_until_valid(tx_transfer_signed['id'])
 
 printd(get_tx_owned(dimi['vk']))
 printd(get_tx_owned(mark['vk']))
