@@ -46,6 +46,7 @@ $ pip install -e .[dev]
 # Initialize everything
 $ bigchaindb -yc .bigchaindb_workshop configure
 $ bigchaindb -c .bigchaindb_workshop init
+$ python -m backend.init_accounts
 
 # Start everything
 $ bigchaindb -c .bigchaindb_workshop start
@@ -56,8 +57,65 @@ $ python -m backend.server
 $ bigchaindb -c .bigchaindb_workshop drop
 ```
 
-
 The API will be available at <http://localhost:8888>.
+
+## Exercises
+
+### Cryptoconditions
+
+Cryptoconditions is a specification for communicating between different ledgers.
+One can think of it as authenticated event handlers or the TCP/IP version for ledgers.
+
+See the [README](exercises/cc/README.md) for details and exercises.
+
+## API endpoints
+
+### Accounts
+
+#### Retrieve account list
+
+##### Request
+```http
+GET /accounts/ HTTP/1.1
+Host: localhost:<PORT>
+Content-Type: application/json
+```
+
+##### Response
+```http
+HTTP/1.1 200 OK
+[   
+    {
+        "id": "<uuid>",
+        "name": "<string>",
+        "sk": "<base58>",
+        "vk": "<base58>"
+    }, ...
+]
+```
+
+#### Create account
+
+##### Request
+```http
+POST /accounts/ HTTP/1.1
+Host: localhost:<PORT>
+Content-Type: application/json
+Body:
+    {
+        "name": "<string: optional>"
+    }
+```
+
+##### Response
+```http
+HTTP/1.1 200 OK
+{
+    "name": "<string>",
+    "sk": "<base58>",
+    "vk": "<base58>"
+}
+```
 
 ## Acknowledgements:
 

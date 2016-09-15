@@ -1,9 +1,9 @@
-all: build init start
+all: destroy build init start
 
 build:
-	docker-compose build
+	docker-compose build --no-cache
 
-init: reinit_db config
+init: reinit_db config accounts
 
 start:
 	docker-compose up
@@ -17,7 +17,7 @@ config:
 	docker-compose run --rm bdb bigchaindb -c .bigchaindb_workshop init
 
 accounts:
-	docker-compose run --rm bdb python init_accounts.py
+	docker-compose run --rm bdb python -m bigchaindb_workshop.backend.init_accounts
 
 drop_db:
 	docker-compose stop rdb
@@ -31,3 +31,6 @@ reinit_db: drop_db start_db
 
 stop:
 	docker-compose down
+
+destroy:
+	docker-compose rm -f
