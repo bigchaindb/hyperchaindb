@@ -39,7 +39,9 @@ Note that the serialized URI's are platform and language independent.
 
 ## Exercises:
 
-Each python file contains either an exercise or a fulfletched solution.
+Each python file contains either an exercise or a solution.
+Run each example from the `bigchaindb_examples` directory as a python module
+
 The scope covered is:
 
 1. General usage of conditions and fulfillments: `$ python -m exercises.cc.ex1_condition_fulfillment_solution`
