@@ -68,7 +68,17 @@ One can think of it as authenticated event handlers or the TCP/IP version for le
 
 See the [README](exercises/cc/README.md) for details and exercises.
 
+### BigchainDB
+
+See the [README](exercises/bdb/README.md) for details and exercises.
+
 ## API endpoints
+
+### BigchainDB
+
+See the transaction endpoints in the [BighainDB docs](https://bigchaindb.readthedocs.io/en/latest/drivers-clients/http-client-server-api.html)
+
+Note: Once running, you can also find the rethinkdb interface at <http://localhost:8080> when running locally or at <http://localhost:58087> when running on Docker.
 
 ### Accounts
 

@@ -14,14 +14,8 @@ Make sure you are running BigchainDB either in Docker or locally.
 
 Run each example from the `bigchaindb_examples` directory as a python module
 
-1. Quick start: learn to use the driver and API
+1. Quick start: learn to use the driver and API: `$ python -m exercises.bdb.ex0_quickstart`
 
-`$ python -m exercises.bdb.ex0_quickstart`
+2. CREATE tokens and TRANSFER them: `$ python -m exercises.bdb.ex1_tx_create_transfer_solution`
 
-2. CREATE tokens and TRANSFER them
-
-`$ python -m exercises.bdb.ex1_tx_create_transfer_solution`
-
-3. Use custom cryptoconditions to set up a quiz
-
-`$ python -m exercises.bdb.ex2_tx_cryptoconditions`
+3. Use custom cryptoconditions to set up a quiz: `$ python -m exercises.bdb.ex2_tx_cryptoconditions`

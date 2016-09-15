@@ -42,7 +42,7 @@ Note that the serialized URI's are platform and language independent.
 Each python file contains either an exercise or a fulfletched solution.
 The scope covered is:
 
-1. General usage of conditions and fulfillments.
-2. Hash locks
-3. Asymmetric keys
-4. Threshold conditions
+1. General usage of conditions and fulfillments: `$ python -m exercises.cc.ex1_condition_fulfillment_solution`
+2. Hash locks: `$ python -m exercises.cc.ex2_hashlock_solution`
+3. Asymmetric keys: `$ python -m exercises.cc.ex3_asymmetric_keys_solution`
+4. Threshold conditions: `$ python -m exercises.cc.ex4_threshold_solution`
