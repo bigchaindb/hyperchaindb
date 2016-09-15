@@ -17,7 +17,7 @@ config:
 	docker-compose run --rm bdb bigchaindb -c .bigchaindb_workshop init
 
 accounts:
-	docker-compose run --rm bdb python -m backend.init_accounts
+	docker-compose run --rm bdb python -m bigchaindb_workshop.backend.init_accounts
 
 drop_db:
 	docker-compose stop rdb

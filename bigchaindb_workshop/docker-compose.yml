@@ -21,10 +21,12 @@ services:
     environment:
       BIGCHAINDB_CONFIG: .bigchaindb_workshop
       BIGCHAINDB_DATABASE_HOST: rdb
+      BIGCHAINDB_BASE_URL: http://bdb:9984
       BIGCHAINDB_API_ENDPOINT: http://bdb:9984/api/v1
       BIGCHAINDB_SERVER_BIND: 0.0.0.0:9984
       LEDGER_API_BASE_PORT: 48000
       LEDGER_WS_BASE_PORT: 48888
+      BDB_API_ACCOUNTS: http://api:8888/accounts
       DOCKER_MACHINE_IP: "${DOCKER_MACHINE_IP}"
     command: bigchaindb -c .bigchaindb_workshop start
 
@@ -33,17 +35,18 @@ services:
       context: .
       dockerfile: ./compose/Dockerfile
     volumes:
-      - ./backend:/usr/src/app/backend
+      - ./backend:/usr/src/app/bigchaindb_workshop/backend
     volumes_from:
       - bdb
     environment:
+      BIGCHAINDB_CONFIG_PATH: /usr/src/app/
       BIGCHAINDB_CONFIG: .bigchaindb_workshop
       BIGCHAINDB_DATABASE_HOST: rdb
       BIGCHAINDB_LEDGER_NUMBER: 0
       TORNADO_HOST: 0.0.0.0
     ports:
       - "48888:8888"
-    command: python -m backend.server
+    command: python -m bigchaindb_workshop.backend.server
 
   nginx:
     restart: always
