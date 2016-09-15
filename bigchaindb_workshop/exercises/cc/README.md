@@ -11,7 +11,7 @@ We support **Python>=3.4**.
 Install from pypi:
 
 ```
-$ pip install cryptocondtions
+$ pip install cryptoconditions
 ```
 
 # Crypto Conditions
