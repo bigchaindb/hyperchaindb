@@ -45,7 +45,7 @@ type Asset struct {
 type AssetTransfer struct {
 	OwnerFrom  string `json:"ownerfrom"`
 	OwnerTo    string `json:"ownerto"`
-	Identifier string `json:"identifer"`
+	Identifier string `json:"identifier"`
 	BigChainId string `json:"bigchainid"`
 }
 
@@ -148,39 +148,6 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function stri
 
 	return nil, nil
 }
-
-// sell - puts an asset on the market
-/*
-func (t *SimpleChaincode) sell(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
-	if len(args) != 1 {
-		return nil, errors.New("sell - Incorrect number of arguments. Expecting 1")
-	}
-
-	assetAsJson := args[0]
-
-	asset := Asset{}
-
-	json.Unmarshal([]byte(assetAsJson), &asset)
-
-	//Get the assets from state
-	assetsAsBytes, err := stub.GetState("sales")
-
-	if err != nil {
-		return nil, errors.New("can't get sales from state")
-	}
-
-	//deserialise
-	assets := assetsFromBytes(assetsAsBytes)
-
-	assets[asset.Identifier] = &asset
-
-	updatedassetsBytes := assetsToBytes(assets)
-
-	err = stub.PutState("sales", updatedassetsBytes)
-
-	return nil, nil
-}
-*/
 
 // create asset and associates it with user
 func (t *SimpleChaincode) create(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
@@ -355,6 +322,8 @@ func (t *SimpleChaincode) transferConfirmed(stub shim.ChaincodeStubInterface, ar
 		return nil, errors.New("transferConfirmed - Incorrect number of arguments. Expecting 1 which is transfer Payload")
 	}
 
+	fmt.Println("*** Running Transfer confirmed ***")
+
 	transferAsJson := args[0]
 
 	transfer := AssetTransfer{}
@@ -368,19 +337,53 @@ func (t *SimpleChaincode) transferConfirmed(stub shim.ChaincodeStubInterface, ar
 		return nil, errors.New("can't get assets from TransferTemp")
 	}
 
+	//OK HERE
+
 	transferTempAssets, err := assetsFromBytes(transferTempAssetsAsBytes)
 
 	if err != nil {
 		return nil, errors.New("can't deserialise temp assets, error:" + err.Error())
 	}
 
-	//Get the asset to transfer from the temp store
-	asset := transferTempAssets[transfer.Identifier]
+	//OK HERE
 
-	//Update the owner
-	asset.Owner = transfer.OwnerTo
+	//Get the asset to transfer from the temp store
+
+	var asset *Asset
+
+	for _, tempAsset := range transferTempAssets {
+
+		if tempAsset.Identifier == transfer.Identifier {
+
+			asset = tempAsset
+			break
+		}
+	}
+
+	//asset := transferTempAssets[transfer.Identifier]
+
+	if asset == nil {
+		return nil, errors.New("Cant retrieve asset from temp store Id:" + transfer.Identifier)
+	}
+
+	transferedAsset := &Asset{Name: asset.Name,
+		Identifier: asset.Identifier,
+		Type:       asset.Type,
+		Owner:      transfer.OwnerTo,
+		Price:      asset.Price,
+		BigChainId: transfer.BigChainId}
+
+	fmt.Printf("transferedAsset.identifier %s", transferedAsset.Identifier)
 
 	destinationAssetsAsBytes, err := stub.GetState(transfer.OwnerTo)
+
+	if err != nil {
+		return nil, errors.New("can't get state for Owner to, error:" + err.Error())
+	}
+
+	fmt.Printf("destinationAssetsAsBytes %s, %v", destinationAssetsAsBytes, *transferedAsset)
+
+	//NOT OK BEFORE HERE
 
 	if err != nil {
 		return nil, errors.New("can't get the destination assets from ownerTo" + transfer.OwnerTo)
@@ -394,7 +397,7 @@ func (t *SimpleChaincode) transferConfirmed(stub shim.ChaincodeStubInterface, ar
 	}
 
 	//Save the asset in the new destination
-	destinationAssets[asset.Identifier] = asset
+	destinationAssets[transferedAsset.Identifier] = transferedAsset
 
 	updatedDestinationAssetsBytes, err := assetsToBytes(destinationAssets)
 
@@ -403,8 +406,6 @@ func (t *SimpleChaincode) transferConfirmed(stub shim.ChaincodeStubInterface, ar
 	}
 
 	err = stub.PutState(transfer.OwnerTo, updatedDestinationAssetsBytes)
-
-	//Remove from Transfer Temp
 
 	delete(transferTempAssets, asset.Identifier)
 
@@ -415,6 +416,12 @@ func (t *SimpleChaincode) transferConfirmed(stub shim.ChaincodeStubInterface, ar
 	}
 
 	err = stub.PutState("TransferTemp", transferTempUpdatedAsBytes)
+
+	if err != nil {
+		return nil, errors.New("can't update TransferTemp, error:" + err.Error())
+	}
+
+	fmt.Println("*** Finished Transfer confirmed ***")
 
 	return nil, nil
 }

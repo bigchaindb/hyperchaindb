@@ -9,6 +9,13 @@ import (
 	"os"
 )
 
+type AssetTransfer struct {
+	OwnerFrom  string `json:"ownerfrom"`
+	OwnerTo    string `json:"ownerto"`
+	Identifier string `json:"identifier"`
+	BigChainId string `json:"bigchainid"`
+}
+
 func getContent() {
 
 	url := "http://localhost:9984/api/v1/transactions/eae4fda7d86667294bdcef3768dc2ef77cb34c5ba9cf25f6a4cc7f1ea5bdf9ae"
@@ -63,11 +70,83 @@ func queryFabric(account string) {
             "method": "query",
             "params": {
                 "type": 1,
-                "chaincodeID": { "name": "d2d3fe9e0f52b60d2762a8d990e7ae1365dcbf0ee481a0e61e73dbe63531917f72bcd23380b99f28c2e526305170c7314342dda45b4877889e87e8152a341f4f"  },
-                "ctorMsg": { "function": "query",  "args": ["` + account + `"]  }
+                "chaincodeID": { "name": "53d800261a338f0da38ba0408e91bd1e497d2e355e8a994edf435abeaa3c296db2e9035e74b0705891201c583925d9e52cc833bd07f704ed49459e3bbf60dde9"  },
+                "ctorMsg": { "function": "assets",  "args": ["` + account + `"]  }
             },
             "id": 3
         }`)
+
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonStr))
+	req.Header.Set("X-Custom-Header", "myvalue")
+	req.Header.Set("Content-Type", "application/json")
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		panic(err)
+	}
+	defer resp.Body.Close()
+
+	fmt.Println("response Status:", resp.Status)
+	fmt.Println("response Headers:", resp.Header)
+	body, _ := ioutil.ReadAll(resp.Body)
+	fmt.Println("response Body:", string(body))
+
+}
+
+func createConfirmInFabric(payload string) {
+
+	url := "http://localhost:7050/chaincode"
+	fmt.Println("URL:>", url)
+
+	//var jsonStr = []byte(`{"title":"Buy cheese and bread for breakfast."}`)
+
+	var jsonStr = []byte(`{
+            "jsonrpc": "2.0",
+            "method": "invoke",
+            "params": {
+                "type": 1,
+                "chaincodeID": { "name": "53d800261a338f0da38ba0408e91bd1e497d2e355e8a994edf435abeaa3c296db2e9035e74b0705891201c583925d9e52cc833bd07f704ed49459e3bbf60dde9"  },
+                "ctorMsg": { "function": "createconfirm",  "args": [` + payload + `]  }
+            },
+            "id": 3
+        }`)
+
+	fmt.Printf("Payload %s", string(jsonStr))
+
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonStr))
+	req.Header.Set("X-Custom-Header", "myvalue")
+	req.Header.Set("Content-Type", "application/json")
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		panic(err)
+	}
+	defer resp.Body.Close()
+
+	fmt.Println("response Status:", resp.Status)
+	fmt.Println("response Headers:", resp.Header)
+	body, _ := ioutil.ReadAll(resp.Body)
+	fmt.Println("response Body:", string(body))
+
+}
+
+func createTransferConfirmed() {
+
+	url := "http://localhost:7050/chaincode"
+	fmt.Println("URL:>", url)
+
+	var jsonStr = []byte(`{"jsonrpc": "2.0",
+	"method": "invoke",
+	"params": {
+		"type": 1,
+		"chaincodeID": { "name": "9fbc56427f72c537c9bc654cb2245eb0398c7ffafdb93fea58cc4dcc4f998f8202c1600a08d767da3f8cd70c4474c591f80ab41135b98d27c2a20bfd3cf4cc3a" },
+		"ctorMsg": { "function": "transferconfirmed",  "args": ["{\"ownerfrom\":\"aa\",\"ownerTo\":\"bb\",\"identifier:\"A1\",\"bigchainId\":\"23409d22cfe631dcc6c4315e3b52e7b8333a07843be56705d9110e7380a4d9f5\"}"]  }
+	},
+	"id": 10}`)
+
+	fmt.Printf("Payload %s", string(jsonStr))
 
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonStr))
 	req.Header.Set("X-Custom-Header", "myvalue")
@@ -187,16 +266,18 @@ func main() {
 
 	var account string
 
-	flag.StringVar(&account, "account", "a", "listen to events from given chaincode")
+	flag.StringVar(&account, "account", "aa", "listen to events from given chaincode")
 	flag.Parse()
 
 	//queryFabric(account)
 
 	//postToBigChain()
 
-	postToProxy()
+	//postToProxy()
 	//getContent()
 	//retrieveFromBigChainDb()
+
+	createTransferConfirmed()
 
 	os.Exit(0)
 }
