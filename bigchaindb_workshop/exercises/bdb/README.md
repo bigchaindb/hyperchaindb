@@ -4,7 +4,11 @@
 
 This repo contains examples for BigchainDB.
 
-## Exercises:
+Check out more examples in the [documentation](https://bigchaindb.readthedocs.io/en/latest/drivers-clients/python-server-api-examples.html)
+
+Or try out the [BigchainDB examples](https://github.com/bigchaindb/bigchaindb-examples)
+
+## Examples:
 
 Make sure you are running BigchainDB either in Docker or locally.
 
