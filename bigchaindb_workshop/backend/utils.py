@@ -11,13 +11,13 @@ NUM_ACCOUNTS = 3
 try:
     CONFIG_FILE = os.environ['BIGCHAINDB_CONFIG']
 except KeyError:
-    CONFIG_FILE = '.bigchaindb_workshop'
+    CONFIG_FILE = os.path.dirname(os.path.realpath(__file__)) + '/../' + '.bigchaindb_workshop'
 
 
 def get_bigchain(conf=CONFIG_FILE):
     if os.path.isfile(conf):
         bigchaindb.config_utils.autoconfigure(filename=conf, force=True)
-    return bigchaindb.Bigchain()
+    return bigchaindb.Bigchain(dbname=APP_DB_NAME)
 
 
 @coroutine

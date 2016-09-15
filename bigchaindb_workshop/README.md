@@ -44,8 +44,10 @@ $ source venv/bin/activate
 $ pip install -e .[dev]
 
 # Initialize everything
+$ export BIGCHAINDB_DATABASE_NAME=bigchaindb_workshop
 $ bigchaindb -yc .bigchaindb_workshop configure
 $ bigchaindb -c .bigchaindb_workshop init
+$ python -m backend.init_accounts
 
 # Start everything
 $ bigchaindb -c .bigchaindb_workshop start
