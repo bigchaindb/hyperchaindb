@@ -46,6 +46,7 @@ $ pip install -e .[dev]
 # Initialize everything
 $ bigchaindb -yc .bigchaindb_workshop configure
 $ bigchaindb -c .bigchaindb_workshop init
+$ python -m backend.init_accounts
 
 # Start everything
 $ bigchaindb -c .bigchaindb_workshop start
@@ -85,9 +86,9 @@ Content-Type: application/json
 HTTP/1.1 200 OK
 [   
     {
-        "id": "<uuid>"
+        "id": "<uuid>",
         "name": "<string>",
-        "sk": "<base58>"
+        "sk": "<base58>",
         "vk": "<base58>"
     }, ...
 ]
@@ -111,7 +112,7 @@ Body:
 HTTP/1.1 200 OK
 {
     "name": "<string>",
-    "sk": "<base58>"
+    "sk": "<base58>",
     "vk": "<base58>"
 }
 ```

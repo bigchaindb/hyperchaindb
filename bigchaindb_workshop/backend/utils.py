@@ -5,13 +5,13 @@ from tornado.gen import coroutine
 
 API_BASE_HOST = os.environ.get('DOCKER_MACHINE_IP') or 'localhost'
 API_BASE_PORT = int(os.environ.get('API_BASE_PORT', '8888'))
-APP_DB_NAME = 'bigchaindb_workshop'
+APP_DB_NAME = 'bigchain'
 NUM_ACCOUNTS = 3
 
 try:
     CONFIG_FILE = os.environ['BIGCHAINDB_CONFIG']
 except KeyError:
-    CONFIG_FILE = '.bigchaindb_workshop'
+    CONFIG_FILE = os.path.dirname(os.path.realpath(__file__)) + '/../' + '.bigchaindb_workshop'
 
 
 def get_bigchain(conf=CONFIG_FILE):

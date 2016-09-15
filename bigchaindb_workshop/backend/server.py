@@ -14,7 +14,7 @@ logger.info('Initializing tornado server')
 
 app = web.Application([
     (r'/accounts', AccountsHandler),
-    (r'/accounts/(.*)/changes', ChangeFeedWebSocket)
+    (r'/accounts/(.*)/changes', ChangeFeedWebSocket),
 ])
 
 
