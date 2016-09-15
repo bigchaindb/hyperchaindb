@@ -56,9 +56,16 @@ $ python -m backend.server
 $ bigchaindb -c .bigchaindb_workshop drop
 ```
 
-
 The API will be available at <http://localhost:8888>.
 
+## Exercises
+
+### Cryptoconditions
+
+Cryptoconditions is a specification for communicating between different ledgers.
+One can think of it as authenticated event handlers or the TCP/IP version for ledgers.
+
+See the [README](exercises/cryptoconditions/README.md) for details and exercises.
 
 ## API endpoints
 
