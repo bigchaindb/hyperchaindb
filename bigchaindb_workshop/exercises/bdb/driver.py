@@ -4,7 +4,7 @@ import requests
 
 from time import sleep
 
-from ...backend.utils import get_bigchain
+from backend.utils import get_bigchain
 from .util import printd
 
 b = get_bigchain()
