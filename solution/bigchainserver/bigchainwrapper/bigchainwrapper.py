@@ -74,7 +74,7 @@ def transferAsset(fromUserName,toUserName,assetToTransfer):
 
     print(assetIds)
 
-    retrievedAssetToTransfer= [assetId for assetId in assetIds if assetId['txid']==assetToTransfer['id']]
+    retrievedAssetToTransfer= [assetId for assetId in assetIds if assetId['txid']==assetToTransfer]
 
     print('\nretrievedAssetToTransfer',retrievedAssetToTransfer)
 

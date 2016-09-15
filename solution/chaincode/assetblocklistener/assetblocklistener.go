@@ -21,6 +21,7 @@ package main
 
 import (
 	"bytes"
+	"encoding/json"
 	"errors"
 	"flag"
 	"fmt"
@@ -107,7 +108,7 @@ func main() {
 	var listenToRejections bool
 	var chaincodeID string
 	flag.StringVar(&eventAddress, "events-address", "0.0.0.0:7053", "address of events server")
-	flag.BoolVar(&listenToRejections, "listen-to-rejections", false, "whether to listen to rejection events")
+	flag.BoolVar(&listenToRejections, "listen-to-rejections", true, "whether to listen to rejection events")
 	flag.StringVar(&chaincodeID, "events-from-chaincode", "", "listen to events from given chaincode")
 	flag.Parse()
 
@@ -126,8 +127,11 @@ func main() {
 			fmt.Printf("\n")
 			fmt.Printf("Received block\n")
 			fmt.Printf("--------------\n")
-			for _, r := range b.Block.Transactions {
-				fmt.Printf("Transaction:\n\t[%v]\n", r)
+			if b.Block.Transactions != nil {
+
+				for _, r := range b.Block.Transactions {
+					fmt.Printf("Transaction:\n\t[%v]\n", r)
+				}
 			}
 		case r := <-a.rejected:
 			fmt.Printf("\n")
@@ -142,7 +146,7 @@ func main() {
 			fmt.Printf("------------------------\n")
 			fmt.Printf("Chaincode Event:%v\n", ce)
 
-			processChainCodeEvent(ce, chaincodeID)
+			go processChainCodeEvent(ce, chaincodeID)
 		}
 	}
 }
@@ -166,7 +170,7 @@ func processChainCodeEvent(cEvent *pb.Event_ChaincodeEvent, chaincodeID string) 
 			return
 		}
 
-		returnFromHlPayload, err := postToHyperledgerProxy("http://localhost:7050/chaincode", returnPayload, chaincodeID)
+		returnFromHlPayload, err := postToHyperledgerProxy("http://localhost:7050/chaincode", returnPayload, chaincodeID, "createconfirmed")
 
 		if err != nil {
 			fmt.Printf("Error Sending createconfirm to hyperledger %s %s", err.Error(), string(returnFromHlPayload))
@@ -179,12 +183,29 @@ func processChainCodeEvent(cEvent *pb.Event_ChaincodeEvent, chaincodeID string) 
 	if eventName == "transferAsset" {
 
 		url := "http://10.0.2.2:8081/transfer"
+	
+		returnPayload, err := postToBigChainProxy(url, payload)
 
-		postToBigChainProxy(url, payload)
+		if err != nil {
+			fmt.Printf("\nError Sending create to big chain db %s", err.Error())
+			return
+		}
+
+		returnFromHlPayload, err := postToHyperledgerProxy("http://localhost:7050/chaincode", returnPayload, chaincodeID, "transferconfirmed")
+
+		fmt.Printf("\nReturn payload from Hyperledger, %s ", string(returnFromHlPayload))
+
+		if err != nil {
+			fmt.Printf("\nError Sending transferconfirmed to hyperledger \n%s \n%s", err.Error(), string(returnFromHlPayload))
+			return
+		}
+
+		println("Finished processing event")
 		return
 	}
 
-	fmt.Printf("Not processing event :%s\n", eventName)
+	fmt.Printf("\nNot processing event :%s\n", eventName)
+
 }
 
 func postToBigChainProxy(url string, payload []byte) ([]byte, error) {
@@ -209,33 +230,41 @@ func postToBigChainProxy(url string, payload []byte) ([]byte, error) {
 	body, _ := ioutil.ReadAll(resp.Body)
 	fmt.Println("response Body:", string(body))
 
-	if resp.Status != "200" {
-		return body, errors.New("Bad response from bigchain proxy" + resp.Status)
+	if resp.Status != "200 OK" {
+		return body, errors.New("Bad response from bigchain proxy:" + resp.Status)
 	}
 
-	return body, nil
+	retbody := body
+
+	return retbody, nil
 }
 
-func postToHyperledgerProxy(url string, payload []byte, chaincodeID string) ([]byte, error) {
+func postToHyperledgerProxy(url string, payload []byte, chaincodeID string, function string) ([]byte, error) {
 
 	fmt.Println("URL:>", url)
 
-	var jsonStr = []byte(`{
-            "jsonrpc": "2.0",
-            "method": "invoke",
-            "params": {
-                "type": 1,
-                "chaincodeID": { "name": "` + chaincodeID + `" },
-                "ctorMsg": { "function": "createconfirm",  "args": ["` + string(payload) + `"]  }
-            },
-            "id": 10
-        }`)
+	marshalledPayload, err := json.Marshal(string(payload))
 
-	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonStr))
+	var jsonStr = []byte(`{
+		            "jsonrpc": "2.0",
+		            "method": "invoke",
+		            "params": {
+		                "type": 1,
+		                "chaincodeID": { "name": "` + chaincodeID + `" },
+		                "ctorMsg": { "function": "` + function + `",  "args": [` + string(marshalledPayload) + `]  }
+		            },
+		            "id": 10
+		        }`)
+
+	fmt.Printf("return payload %s", string(jsonStr))
+
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer([]byte(string(jsonStr))))
 	req.Header.Set("X-Custom-Header", "myvalue")
 	req.Header.Set("Content-Type", "application/json")
 
 	client := &http.Client{}
+
+	client.Timeout = 30000000
 	resp, err := client.Do(req)
 	if err != nil {
 		return nil, err
@@ -247,9 +276,11 @@ func postToHyperledgerProxy(url string, payload []byte, chaincodeID string) ([]b
 	body, _ := ioutil.ReadAll(resp.Body)
 	fmt.Println("response Body:", string(body))
 
-	if resp.Status != "200" {
+	if resp.Status != "200 OK" {
 		return body, errors.New("Bad response from hyperledger" + resp.Status)
 	}
 
-	return body, nil
+	retbody := body
+
+	return retbody, nil
 }

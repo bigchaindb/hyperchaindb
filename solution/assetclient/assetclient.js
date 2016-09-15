@@ -42,7 +42,7 @@ function deploy() {
     });
 }
 
-function createasset(){
+function createAsset(){
 
     var chaincodeName = chaincodeGuid;
 
