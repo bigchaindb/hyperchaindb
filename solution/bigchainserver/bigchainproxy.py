@@ -95,17 +95,18 @@ class myHandler(BaseHTTPRequestHandler):
 
 			print(data_string, readable)
 
-			fromUser = readable['fromUser']
-			toUser   =	readable['toUser']
-			assetId = readable['identifier']
+			ownerFrom = readable['ownerfrom']
+			ownerTo   =	readable['ownerto']
+			identifier = readable['identifier']
+			bigchainId = readable['bigchainid']
+
 			self.send_response(200)
 			self.end_headers()
 		
-			tx, result = bigchainwrapper.transferAsset(fromUser, toUser, assetId)
+			tx, result = bigchainwrapper.transferAsset(ownerFrom, ownerTo, bigchainId)
 
-			
+			self.wfile.write(bytes('{"ownerfrom":"'+ ownerFrom+ '","ownerTo":"'+ ownerTo+'","identifier":"'+ identifier +'","bigchainId":"'+ bigchainId+'"}',"utf8"))
 
-			self.wfile.write(bytes('{"fromUser":"' + fromUser + '","tx":'+  str(tx) + '}',"utf8"))
 			return
 
 try:
