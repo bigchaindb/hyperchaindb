@@ -1,7 +1,7 @@
-all: build init start
+all: destroy build init start
 
 build:
-	docker-compose build
+	docker-compose build --no-cache
 
 init: reinit_db config accounts
 
@@ -31,3 +31,6 @@ reinit_db: drop_db start_db
 
 stop:
 	docker-compose down
+
+destroy:
+	docker-compose rm -f
