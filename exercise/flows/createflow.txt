@@ -1,5 +1,8 @@
-NodeClient -> Hyperledger: Create Asset (http)
-Hyperledger->HyperledgerBlockListener:  Send AssetCreated Event
-HyperledgerBlockListener-> BigChainAssetServer : Create Asset (http)
-BigChainAssetServer-> BigChainDb: Create Asset (BigChain Python api)
-BigChainAssetService-> Hyperledger: Store Asset TxId (http)
+NodeClient -> Hyperledger: Transfer  (http)
+Hyperledger->Hyperledger: Put asset in holding store
+Hyperledger-> HyperledgerBlockListener: Send Asset Transfer Event
+HyperledgerBlockListener-> BigChainAssetService : Transfer Asset (http)
+BigChainAssetService-> BigChainDb: Transfer Asset (BigChain Python api)
+BigChainAssetService-> HyperledgerBlockListener: Confirm Transfer (http)
+HyperledgerBlockListener-> Hyperledger: Move Asset from Holding Store to new party
+
