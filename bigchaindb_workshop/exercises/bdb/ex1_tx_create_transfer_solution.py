@@ -44,6 +44,11 @@ print(response.status_code)
 # Poll the transaction status
 poll_tx_status_until_valid(tx_transfer_signed['id'])
 
+response = post_tx(tx_transfer_signed)
+print(response.status_code)
+
+poll_tx_status_until_valid(tx_transfer_signed['id'])
+
 printd(get_tx_owned(dimi['vk']))
 printd(get_tx_owned(mark['vk']))
 
